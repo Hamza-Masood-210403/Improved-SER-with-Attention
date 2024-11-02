@@ -135,7 +135,7 @@ class SelfAttentionLayer(nn.Module):
 
 class KAF_random(nn.Module):
     def __init__(self, D=20, gamma=1.0):
-        super(KAF, self).__init__()
+        super(KAF_random, self).__init__()
         # Dictionary of D elements uniformly spaced around zero
         self.d = nn.Parameter(torch.linspace(-2, 2, D), requires_grad=False)
         # Mixing coefficients (alpha) initialized randomly and learned

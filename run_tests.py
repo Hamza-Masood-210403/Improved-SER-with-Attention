@@ -17,15 +17,17 @@ commands = [
 ]
 
 with open("results.txt", "a") as file:
+    print("Commands:")
     for cmd in commands:
         full_command = ["python", "main.py"] + cmd
+        print(f"{' '.join(full_command)}")
 
-        result = subprocess.run(full_command, capture_output=True, text=True)
+        # result = subprocess.run(full_command, capture_output=True, text=True)
         
-        file.write(f"Command: {' '.join(full_command)}\n")
-        file.write("Output:\n")
-        file.write(result.stdout)
-        file.write("\nError (if any):\n")
-        file.write(result.stderr if result.stderr else "No errors.\n")
-        file.write("=" * 40 + "\n")
-        print("Done")
+        # file.write(f"Command: {' '.join(full_command)}\n")
+        # file.write("Output:\n")
+        # file.write(result.stdout)
+        # file.write("\nError (if any):\n")
+        # file.write(result.stderr if result.stderr else "No errors.\n")
+        # file.write("=" * 40 + "\n")
+        # print("Done")
