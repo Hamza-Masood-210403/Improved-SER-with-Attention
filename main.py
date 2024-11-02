@@ -238,7 +238,7 @@ def main():
             if((epoch>300)and(epoch % 20 ==0)) or (epoch % 10 ==0):
                 acc_train, acc_test, wa_train, wa_test, _, _ = test(args, model, device, train_data, test_data, num_classes)
 
-        model = torch.load('checkpoint.pt')
+        model.load_state_dict(torch.load('checkpoint.pt'))
 
         acc_train, acc_test, wa_train, wa_test, output, label = test(args, model, device, train_data, test_data, num_classes)
         acc_train_sum += acc_train
