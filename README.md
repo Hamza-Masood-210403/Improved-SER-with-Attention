@@ -39,6 +39,8 @@ optional arguments:
   --patience            Patience for early stopping
   --graph_type          To set the graph type (line or cycle)
   --graph_pooling_type  Pooling type (min, max or sum)
+  --attention_layer     Use attention layer or not
+  --activation          Activation function to be used (relu, kaf or random_kaf)
 ```
 
 <br><br><br>

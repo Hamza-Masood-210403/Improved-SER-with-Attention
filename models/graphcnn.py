@@ -120,15 +120,12 @@ class SelfAttentionLayer(nn.Module):
         Wh1 = Wh.unsqueeze(2)
         Wh2 = Wh.unsqueeze(1)
         
-        # Apply LeakyReLU to the concatenated features before computing e
         e = self.leakyrelu(Wh1 + Wh2)
 
         e = torch.matmul(e, self.a).squeeze(-1)
 
-        # Softmax normalization for attention scores
         attention = F.softmax(e, dim=-1)
 
-        # Attention-weighted feature aggregation
         H_att = torch.bmm(attention, Wh)
         return H_att
 
@@ -136,41 +133,28 @@ class SelfAttentionLayer(nn.Module):
 class KAF_random(nn.Module):
     def __init__(self, D=20, gamma=1.0):
         super(KAF_random, self).__init__()
-        # Dictionary of D elements uniformly spaced around zero
         self.d = nn.Parameter(torch.linspace(-2, 2, D), requires_grad=False)
-        # Mixing coefficients (alpha) initialized randomly and learned
         self.alpha = nn.Parameter(torch.randn(D))
-        # Width of the Gaussian kernel
         self.gamma = gamma
 
     def forward(self, x):
-        # Apply kernel expansion: sum(alpha * Gaussian kernel)
         gauss_kernels = torch.exp(-self.gamma * (x.unsqueeze(-1) - self.d)**2)
         return torch.matmul(gauss_kernels, self.alpha)
 
 class KAF(nn.Module):
     def __init__(self, D=20, gamma=1.0, epsilon=1e-5):
         super(KAF, self).__init__()
-        # Dictionary of D elements uniformly spaced around zero
         self.d = nn.Parameter(torch.linspace(-2, 2, D), requires_grad=False)
-        # Mixing coefficients (alpha) initialized using ELU mimic strategy
         self.alpha = nn.Parameter(torch.randn(D))
-        # Width of the Gaussian kernel
         self.gamma = gamma
 
-        # Initialize alpha to mimic ELU behavior
         with torch.no_grad():
-            # Sampling the ELU at the dictionary points
             t = torch.nn.functional.elu(self.d)
-            # Gaussian kernel between the dictionary points
             K = torch.exp(-self.gamma * (self.d.unsqueeze(-1) - self.d.unsqueeze(0))**2)
-            # Regularization term to avoid numerical instability
             K += epsilon * torch.eye(D)
-            # Compute the initial alpha to mimic ELU using torch.solve for older PyTorch versions
             self.alpha.copy_(torch.linalg.solve(K, t.unsqueeze(1))[0].squeeze())
 
     def forward(self, x):
-        # Apply kernel expansion: sum(alpha * Gaussian kernel)
         gauss_kernels = torch.exp(-self.gamma * (x.unsqueeze(-1) - self.d)**2)
         return torch.matmul(gauss_kernels, self.alpha)
 
